@@ -3,15 +3,15 @@ package com.itllp;
 import java.io.PrintStream;
 import java.util.ResourceBundle;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Unit test for simple App.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AppTest {
 
 	protected static final ResourceBundle testMessages = ResourceBundle.getBundle("testMessages");
@@ -29,6 +29,18 @@ public class AppTest {
 
 	PrintStream errorStream;
 	PrintStream loggingStream;
+
+	@BeforeEach
+	public void setUp() {
+		errorStream = System.err;
+		loggingStream = spy(errorStream);
+		System.setErr(loggingStream);
+	}
+
+	@AfterEach
+	public void tearDown() {
+		System.setErr(errorStream);
+	}
 
 	@Test
 	public void testApp() {
@@ -47,17 +59,4 @@ public class AppTest {
 		final String loggingMessage = captorLoggingMessage.getValue();
 		assertEquals("[main] INFO App - Hello John! /by " + testMessages.getString("artifactId"), loggingMessage);
 	}
-
-	@Before
-	public void setUp() {
-		errorStream = System.err;
-		loggingStream = spy(errorStream);
-		System.setErr(loggingStream);
-	}
-
-	@After
-	public void tearDown() {
-		System.setErr(errorStream);
-	}
-
 }
